@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class  Player : MonoBehaviour {
@@ -8,6 +9,9 @@ public class  Player : MonoBehaviour {
     // Start is called before the first frame update
     public float speed;
     Animator Anim;
+    public Image[] hearts;
+    public int MaxHealth;
+    int CurrentHealth;
 
     void Start()
     { 
