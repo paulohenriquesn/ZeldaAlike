@@ -5,64 +5,48 @@ using UnityEngine.UI;
 
 
 public class  Player : MonoBehaviour {
- 
-    // Start is called before the first frame update
-    public float speed;
-    Animator Anim;
-    public Image[] hearts;
+    
+    Vector2 playerPos; //Vector de posições ele armazena posições de floats. [0.0f,1.0f] 
+    public GameObject CanvasObject; // Objeto canvas, separado para acessar o script
+    public Rigidbody2D playerRb; //Rigidbody2d é um tipo de fisica do jogador,usado para mexer com colisões,posições.
+
+    public float speed; 
     public int MaxHealth;
-    int CurrentHealth;
+    public static int CurrentHealth;
 
     void Start()
     { 
-        Anim = GetComponent<Animator>();
         CurrentHealth = MaxHealth;
-        GetHealth();
-    }
-    void GetHealth() {
-        for(int i= 0; i <= hearts.Length -1; i++)
-        {
-      hearts[i].gameObject.SetActive(false);
-        }
-        for(int i = 0; i <= CurrentHealth -1; i++) {
-            hearts[i].gameObject.SetActive(true);
-        }
-
+        CanvasObject.GetComponent<CanvasBehaviour>().GetHealth(); // Acessa o Objeto Canvas no componente Script, e acessa a função dela.
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()  //Metodo com menos bug porque se atualiza de acordo com os frames.
     {
-        Movement(); 
+        Movement();
+    }
+
+   
+    void Update()
+    { 
         if(Input.GetKeyDown(KeyCode.P))
         CurrentHealth--;
-        GetHealth();
+        CanvasObject.GetComponent<CanvasBehaviour>().GetHealth();
         if (Input.GetKeyDown(KeyCode.L))
         CurrentHealth++;
         if(CurrentHealth > MaxHealth)
         CurrentHealth = MaxHealth;
     }
-    void Movement() {
-     
-    if(Input.GetKey(KeyCode.W))
-    { transform.Translate(0,speed*Time.deltaTime,0); 
-    Anim.SetInteger("dir", 0);
-    }
-      else if(Input.GetKey(KeyCode.S))
+    void Movement()
     {
-        transform.Translate(0,-speed*Time.deltaTime,0);
-        Anim.SetInteger("dir", 1);
-        }
-     else if (Input.GetKey(KeyCode.A))
-     {
-         transform.Translate(-speed*Time.deltaTime,0,0);
-         Anim.SetInteger("dir", 2);
-         
-         }
-     else if(Input.GetKey(KeyCode.D))
-     {
-            transform.Translate(speed*Time.deltaTime,0,0);
-            Anim.SetInteger("dir", 3);
-         }
+        //Outro Metodo porém mais suave.
+
+        //Cria um vetor de 2 valores de posição com o Axis Horizontal e Vertical que estou explicando ali embaixo.
+        /* playerPos = new Vector2(Input.GetAxis("Horizontal") * speed , Input.GetAxis("Vertical") * speed);     
+         //Adiciona uma força no Rigidbody para a fisica fazer uma força para o player se movimentar.
+        playerRb.AddForce(playerPos * Time.deltaTime);*/
+
+        //Pega os Axis Horizontal,Vertical e verificam se estão sendo utilizados por exemplo um joystick se X está sendo utilizado se sim
+        //Ele verifica e retorna a posição de onde está sendo atingido exemplo (PRESSIONO A, RETORNA 1, PRESSIONO D, RETORNA 1) se eu soltar retornam 0.
+        this.transform.Translate(Input.GetAxis("Horizontal") * speed * Time.deltaTime, Input.GetAxis("Vertical") * speed * Time.deltaTime,0);
     }
 }
